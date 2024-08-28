@@ -89,7 +89,7 @@ export default function Chat() {
   return (
     <div>
       <div class="navbar">
-        <div className="w-full bg-white text-black flex items-center justify-between px-4 py-2 fixed top-1 left-0 z-50">
+        <div className="w-full bg-white text-black flex items-center justify-between px-4 py-2 fixed left-0 z-50">
           {/* Left Side: Time */}
           <div className="text-l font-semibold">{currentTime}</div>
 
@@ -126,7 +126,9 @@ export default function Chat() {
         </div>
 
         {/* Profile Section under Navbar */}
-        <div className="flex items-center px-4 py-3 mt-10">
+        <div className="w-full flex items-center px-4 py-3 mt-10 z-50 fixed bg-white">
+
+        
           <button className="text-black">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -174,8 +176,8 @@ export default function Chat() {
           </div>
         </div>
       </div>
-      <div className="max-w-xs mx-auto bg-#FFFFFF rounded-lg overflow-hidden">
-        <div className="flex justify-center mt-2">
+      <div className="max-w-xs mx-auto  bg-#FFFFFF rounded-lg overflow-hidden">
+        <div className="flex justify-center mt-28">
           <div className="rounded-full border-4 border-white">
             <img
               src="https://media.discordapp.net/attachments/812390695864238201/1277922679961292831/images.png?ex=66ceedbd&is=66cd9c3d&hm=a5ef524af20d0ba4887bece2aaaf11503299abf009c4fa9113738631e405f4f9&=&format=webp&quality=lossless" // Update this path to your profile image
@@ -202,28 +204,29 @@ export default function Chat() {
           </button>
         </div>
       </div>
-    
-    <div className="flex items-center justify-center h-screen bg-gray-800">
-      <div className="w-full max-w-sm p-6 bg-gray-900 text-white rounded-lg shadow-md">
-        <div className="overflow-y-auto h-96 mb-4">
-          {initialTimestamp && (
-            <div className="text-sm text-gray-400 text-center mb-2">
+      {initialTimestamp && (
+            <div className="flex justify-center items-center text-sm text-gray-400 text-center mb-2">
               {formatDate(initialTimestamp)}
             </div>
           )}
+    
+    <div className="w-full flex items-center px-4 py-3">
+      <div className="w-full max-w-sm p-6 text-black rounded-lg text-[14px]">
+        <div className="overflow-y-auto h-96 mb-4">
+          
           {responses.map((res, idx) => (
-            <div key={idx} className="my-2">
-              <div className="bg-blue-600 p-3 rounded-lg ">
+            <div key={idx} className="my-3">
+              <div className="bg-[#EFEFEF] rounded-[20px] py-2 px-2.5 inline-block max-w-xs">
                 {res.question}
               </div>
-              <div className="bg-gray-700 p-3 rounded-lg mt-1 animate-fade ">
+              <div className="bg-[#3797F0] rounded-[20px] py-2 px-2.5 inline-block max-w-xs text-white">
                 {res.answer}
               </div>
             </div>
           ))}
           {currentQuestionIndex < questions.length && showNextMessage && (
-            <div className="my-2 animate-fadeinright">
-              <div className="bg-blue-600 p-3 rounded-lg">
+            <div className="my-2 animate-fadeinright right-0">
+              <div className="bg-[#EFEFEF] rounded-[20px] py-2 px-2.5 inline-block max-w-xs">
                 {questions[currentQuestionIndex]}
               </div>
             </div>
