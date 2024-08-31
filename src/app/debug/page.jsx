@@ -99,7 +99,7 @@ export default function Chat() {
   }, [responses]);
 
   return (
-    <div className="flex flex-col h-screen overflow-auto scrollbar-hide">
+    <div className="flex flex-col h-screen overflow-auto  scrollbar-hide">
       {/* Navbar */}
       <div className="navbar">
         <div className="w-full bg-white text-black flex items-center justify-between px-4 py-2 fixed left-0 top-0 z-50">
@@ -225,12 +225,12 @@ export default function Chat() {
           </div>
         )}
 
-        <div className="flex-grow-0 overflow-y-auto" ref={chatContainerRef}>
-          <div className="w-full max-w-sm mx-auto text-black rounded-lg text-[14px]">
+        <div className="flex-grow-0 h-[35vh] overflow-y-auto scrollbar-hide " ref={chatContainerRef}>
+          <div className="w-full max-w-sm mx-auto text-black rounded-lg text-[14px] px-3">
             {responses.map((res, idx) => (
               <div key={idx} className="">
                 {/* Question on the left */}
-                <div className="flex justify-start">
+                <div classNapx-4me="flex justify-start ">
                   <div className="bg-[#EFEFEF] rounded-[20px] py-2 px-2.5 inline-block max-w-xs">
                     {res.question}
                   </div>
@@ -256,11 +256,11 @@ export default function Chat() {
       </div>
 
       {/* Input Box */}
-      <div className="fixed bottom-0 left-0 w-full bg-white px-4 py-4">
+      <div className="fixed bottom-0 left-0 w-full px-4 py-4">
         <div className="flex items-center max-w-sm mx-auto">
           <input
             type="text"
-            className="flex-1 p-2 bg-gray-700 rounded-md focus:outline-none"
+            className="flex-1 p-2  rounded-[20px] border-2 focus:outline-none border-[#e0dcdc]"
             placeholder="Type a message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -268,7 +268,7 @@ export default function Chat() {
           />
           <button
             onClick={handleSendMessage}
-            className="ml-2 bg-blue-500 p-2 rounded-full hover:bg-blue-600"
+            className="ml-2 bg-[#3797F0] p-2 rounded-full hover:bg-blue-600"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -290,4 +290,6 @@ export default function Chat() {
     </div>
   );
 }
+
+
 

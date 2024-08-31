@@ -16,6 +16,7 @@ module.exports = {
 				fade: 'fadeIn 0.75s ease-in-out',
         fadeinright: 'fade-in-right 1s ease-in-out 0.5s 1',
 			},
+      
 
 			keyframes: {
 				fadeIn: {
@@ -35,5 +36,17 @@ module.exports = {
 			},
     },
   },
-  plugins: [],
+  plugins: [
+      function({ addUtilities }) {
+        addUtilities({
+          '.scrollbar-hide': {
+            '-ms-overflow-style': 'none',  /* IE and Edge */
+            'scrollbar-width': 'none',     /* Firefox */
+            '&::-webkit-scrollbar': {
+              display: 'none',             /* Chrome, Safari, and Opera */
+            },
+          },
+        });
+      },
+    ],
 };
