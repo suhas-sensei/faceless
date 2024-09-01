@@ -15,8 +15,16 @@ function formatDate(date) {
   return date.toLocaleString("en-US", options);
 }
 export default function Chat() {
+  const [isVisible, setIsVisible] = useState(true);
   const [currentTime, setCurrentTime] = useState("");
 
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setIsVisible(false);
+  //   }, 1000); 
+  //   return () => clearTimeout(timer);
+  // }, []);
+  
   useEffect(() => {
     // Function to format time in "HH:mm" (24-hour format)
     const updateTime = () => {
@@ -52,7 +60,6 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [initialTimestamp, setInitialTimestamp] = useState(null);
   const [showNextMessage, setShowNextMessage] = useState(false);
-  const chatContainerRef = useRef(null);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -89,14 +96,21 @@ export default function Chat() {
       setTimeout(() => {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setShowNextMessage(true);
-
-        // Scroll to the bottom after the question is displayed
-        setTimeout(() => {
-          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        }, 100);
+        
       }, 800);
     }
   }, [responses]);
+  
+  useEffect(() => {
+    // Scroll to the end of the messages with a slight delay
+    const scrollTimeout = setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100); // Delay to ensure DOM updates
+  
+    // Cleanup the timeout on unmount
+    return () => clearTimeout(scrollTimeout);
+  }, [responses, currentQuestionIndex]);
+  
 
   return (
     <div className="flex flex-col h-screen overflow-auto  scrollbar-hide">
@@ -206,10 +220,18 @@ export default function Chat() {
               <p className="text-gray-600 text-sm">
                 Mental health service · Instagram
               </p>
-              <p className=" text-gray-600 text-sm">22 followers · 33 posts</p>
-              <p className=" text-gray-600 text-sm">
-                You don't follow each other on Instagram
-              </p>
+              <div>
+                {isVisible && (
+                  <div id="demlete">
+                    <p className=" text-gray-600 text-sm">
+                      22 followers · 33 posts
+                    </p>
+                    <p className=" text-gray-600 text-sm">
+                      You don't follow each other on Instagram
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="flex justify-center mt-2">
               <button className="bg-[#EFEFEF] text-black px-3 py-1 font-semibold text-sm/[23px] rounded-md hover:bg-[#b8b0b0]">
@@ -225,7 +247,10 @@ export default function Chat() {
           </div>
         )}
 
-        <div className="flex-grow-0 h-[35vh] overflow-y-auto scrollbar-hide " ref={chatContainerRef}>
+        <div
+          className="flex-grow-0 h-[35vh] overflow-y-auto scrollbar-hide "
+          // ref={chatContainerRef}
+        >
           <div className="w-full max-w-sm mx-auto text-black rounded-lg text-[14px] px-3">
             {responses.map((res, idx) => (
               <div key={idx} className="">
@@ -252,15 +277,17 @@ export default function Chat() {
             )}
             <div ref={messagesEndRef} />
           </div>
+          
         </div>
+        
       </div>
 
       {/* Input Box */}
-      <div className="fixed bottom-0 left-0 w-full px-4 py-4">
+      <div className="fixed bottom-0 left-0 w-full bg-white px-4 py-4">
         <div className="flex items-center max-w-sm mx-auto">
           <input
             type="text"
-            className="flex-1 p-2  rounded-[20px] border-2 focus:outline-none border-[#e0dcdc]"
+            className="flex-1 p-2  rounded-[20px] border-2 border-[#F7ACAC]focus:outline-none"
             placeholder="Type a message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -290,6 +317,3 @@ export default function Chat() {
     </div>
   );
 }
-
-
-
