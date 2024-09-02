@@ -84,7 +84,7 @@ export default function Chat() {
           },
           body: JSON.stringify(responses),
         });
-        // router.push("/payment");
+        router.push("/payment");
       })();
     } else if (responses.length > 0) {
       setTimeout(() => {
