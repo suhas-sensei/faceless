@@ -88,11 +88,11 @@ export default function Chat() {
       })();
     } else if (responses.length > 0) {
       setTimeout(() => {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setCurrentQuestionIndex((prevIndex) => prevIndex + 1); // Use functional update
         setShowNextMessage(true);
       }, 800);
     }
-  }, [responses]);
+  }, [responses, questions.length, router]);
 
   useEffect(() => {
     // Scroll to the end of the messages with a slight delay
@@ -117,21 +117,43 @@ export default function Chat() {
 
           {/* Center: Dynamic Island */}
           <div className="flex-1 flex justify-center">
-            <img
+            <Image
               src="/dyisland.png"
               className="h-6 w-20 ml-8"
               alt="Dynamic Island"
+              width={80} // Adjust the width as per the actual image size
+              height={24} // Adjust the height as per the actual image size
             />
           </div>
 
           {/* Right Side: Icons */}
           <div className="flex items-center space-x-3">
             {/* Signal Icon */}
-            <img src="/network.png" className="h-5 w-5" alt="Signal Icon" />
+            <Image
+              src="/network.png"
+              className="h-5 w-5"
+              alt="Signal Icon"
+              width={20}
+              height={20}
+            />
 
             {/* Wi-Fi Icon */}
-            <img src="/wifi.png" className="h-6 w-6" alt="Wi-Fi Icon" />
-            <img src="/battery.png" className="h-7 w-6" alt="Battery Icon" />
+            <Image
+              src="/wifi.png"
+              className="h-6 w-6"
+              alt="Wi-Fi Icon"
+              width={24}
+              height={24}
+            />
+
+            {/* Battery Icon */}
+            <Image
+              src="/battery.png"
+              className="h-7 w-6"
+              alt="Battery Icon"
+              width={24}
+              height={28}
+            />
           </div>
         </div>
 
@@ -154,10 +176,12 @@ export default function Chat() {
             </svg>
           </button>
 
-          <img
+          <Image
             src="/pfp.png"
             className="rounded-full h-10 w-10 mx-3"
             alt="Profile"
+            width={40} // Adjust the width according to the image size (10 x 4 = 40px)
+            height={40} // Adjust the height according to the image size (10 x 4 = 40px)
           />
 
           <div className="flex flex-col">
@@ -167,14 +191,22 @@ export default function Chat() {
 
           <div className="flex ml-auto space-x-4">
             <button className="text-black">
-              <img src="/call.png" className="h-6 w-6 " alt="Call Icon" />
+              <Image
+                src="/call.png"
+                className="h-6 w-6"
+                alt="Call Icon"
+                width={24} // 6 * 4 = 24px
+                height={24} // 6 * 4 = 24px
+              />
             </button>
 
             <button className="text-black">
-              <img
+              <Image
                 src="/vidcall.png"
-                className="h-7 w-7 "
+                className="h-7 w-7"
                 alt="Video Call Icon"
+                width={28} // 7 * 4 = 28px
+                height={28} // 7 * 4 = 28px
               />
             </button>
           </div>
@@ -185,7 +217,7 @@ export default function Chat() {
           <div className="max-w-xs mx-auto bg-#FFFFFF rounded-lg overflow-hidden mt-28">
             <div className="flex justify-center mt-2">
               <div className="rounded-full border-4 border-white">
-                <img
+                <Image
                   src="/pfp.png"
                   alt="Profile"
                   width={80}
@@ -206,7 +238,7 @@ export default function Chat() {
                       22 followers · 33 posts
                     </p>
                     <p className=" text-gray-600 text-sm">
-                      You don't follow each other on Instagram
+                      You don&apos;t follow each other on Instagram
                     </p>
                   </div>
                 )}
