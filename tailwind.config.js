@@ -11,6 +11,9 @@ module.exports = {
       md: "768px",
       lg: "1024px",
       xl: "1280px",
+      "h-sm": { raw: "(max-height: 750px)" }, // Below 700px height
+      "h-md": { raw: "(min-height: 751px) and (max-height: 862px)" }, // Between 701px and 875px
+      "h-lg": { raw: "(min-height: 862px)" }, // Above 875px height
     },
     extend: {
       backgroundImage: {
@@ -19,40 +22,39 @@ module.exports = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       animation: {
-				fade: 'fadeIn 0.75s ease-in-out',
-        fadeinright: 'fade-in-right 1s ease-in-out 0.5s 1',
-			},
-      
+        fade: "fadeIn 0.75s ease-in-out",
+        fadeinright: "fade-in-right 1s ease-in-out 0.5s 1",
+      },
 
-			keyframes: {
-				fadeIn: {
-					from: { opacity: 0 },
-					to: { opacity: 1 },
-				},
+      keyframes: {
+        fadeIn: {
+          from: { opacity: 0 },
+          to: { opacity: 1 },
+        },
         fadeInRight: {
-          from : {
+          from: {
             opacity: 0,
             transform: "translate3d(20%, 0, 0)", // Adjusted starting position
           },
-          to : {
+          to: {
             opacity: 1,
             transform: "translate3d(0, 0, 0)",
-                    },
-                  },
-			},
+          },
+        },
+      },
     },
   },
   plugins: [
-      function({ addUtilities }) {
-        addUtilities({
-          '.scrollbar-hide': {
-            '-ms-overflow-style': 'none',  /* IE and Edge */
-            'scrollbar-width': 'none',     /* Firefox */
-            '&::-webkit-scrollbar': {
-              display: 'none',             /* Chrome, Safari, and Opera */
-            },
+    function ({ addUtilities }) {
+      addUtilities({
+        ".scrollbar-hide": {
+          "-ms-overflow-style": "none" /* IE and Edge */,
+          "scrollbar-width": "none" /* Firefox */,
+          "&::-webkit-scrollbar": {
+            display: "none" /* Chrome, Safari, and Opera */,
           },
-        });
-      },
-    ],
+        },
+      });
+    },
+  ],
 };

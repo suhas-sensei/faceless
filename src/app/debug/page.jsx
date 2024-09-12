@@ -18,12 +18,12 @@ export default function Chat() {
   const [isVisible, setIsVisible] = useState(true);
   const [currentTime, setCurrentTime] = useState("");
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setIsVisible(false);
-  //   }, 1000);
-  //   return () => clearTimeout(timer);
-  // }, []);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const updateTime = () => {
@@ -227,7 +227,7 @@ export default function Chat() {
         )}
 
         <div
-          className="flex-grow-0 h-[35vh] overflow-y-auto scrollbar-hide "
+          className="flex-grow-0 h-[25vh] h-md:h-[35vh] h-lg:h-[45vh] overflow-y-auto scrollbar-hide"
           // ref={chatContainerRef}
         >
           <div className="w-full max-w-sm mx-auto text-black rounded-lg text-[14px] px-3">
