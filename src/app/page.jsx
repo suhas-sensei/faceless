@@ -43,12 +43,19 @@ export default function Chat() {
   const router = useRouter();
   const questions = [
     "Hello from faceless, what's your name?",
-    "What's your email?",
-    "What service are you interested in?",
-    "What's your preferred date for the meeting?",
-    "Any specific requirements?",
+    "What's your email? We'll send the meeting link here.",
+    "What's your preferred date for the meeting? eg. 19th Oct",
+    "Mention the time in AM/PM. Available between 11am to 2am.",
+    "That's all we need to know. We'll send you the payment link now, then verify the transaction and rest assured, will reach you regarding the details via email. If you feel you've made a mistake, kindly refresh the page. press any key to continue.",
+    <a
+      href="upi://pay?pa=suhas.ghosal2002@okaxis&pn=Suhas%20Ghosal&am=200.00&cu=INR&aid=uGICAgIDrp7vSHg"
+      target="_blank"
+      className="text-blue-500 hover:text-blue-700"
+      key="payment-link" // Add key here
+    >
+      Kindly pay here
+    </a>,
   ];
-
   const [responses, setResponses] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [input, setInput] = useState("");
@@ -84,7 +91,7 @@ export default function Chat() {
           },
           body: JSON.stringify(responses),
         });
-        router.push("/payment");
+        // router.push("/payment");
       })();
     } else if (responses.length > 0) {
       setTimeout(() => {
@@ -245,9 +252,11 @@ export default function Chat() {
               </div>
             </div>
             <div className="flex justify-center mt-2">
-              <button className="bg-[#EFEFEF] text-black px-3 py-1 font-semibold text-sm/[23px] rounded-md hover:bg-[#b8b0b0]">
-                View profile
-              </button>
+              <a href="/about">
+                <button className="bg-[#EFEFEF] text-black px-3 py-1 font-semibold text-sm/[23px] rounded-md hover:bg-[#b8b0b0]">
+                  About us
+                </button>
+              </a>
             </div>
           </div>
         </div>
