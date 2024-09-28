@@ -46,16 +46,12 @@ export default function Chat() {
     "What's your email? We'll send the meeting link here.",
     "What's your preferred date for the meeting? eg. 19th Oct",
     "Mention the time in AM/PM. Available between 11am to 2am.",
-    "That's all we need to know. We'll send you the payment link now, then verify the transaction and rest assured, will reach you regarding the details via email. If you feel you've made a mistake, kindly refresh the page. press any key to continue.",
-    <a
-      href="upi://pay?pa=suhas.ghosal2002@okaxis&pn=Suhas%20Ghosal&am=200.00&cu=INR&aid=uGICAgIDrp7vSHg"
-      target="_blank"
-      className="text-blue-500 hover:text-blue-700"
-      key="payment-link" // Add key here
-    >
-      Kindly pay here
-    </a>,
+    "That's all we need to know. We'll send you the payment link now, then verify the transaction and rest assured, will reach you regarding the details via email. If you feel you've made a mistake, kindly refresh the page. type anything to continue.",
+    
+    
   ];
+  const [showPaymentPopup, setShowPaymentPopup] = useState(false); // State to show/hide payment popup
+
   const [responses, setResponses] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [input, setInput] = useState("");
@@ -71,6 +67,7 @@ export default function Chat() {
   }, [currentQuestionIndex, initialTimestamp]);
 
   const handleSendMessage = () => {
+    
     if (input.trim()) {
       setResponses([
         ...responses,
@@ -78,20 +75,46 @@ export default function Chat() {
       ]);
       setInput("");
       setShowNextMessage(false);
+  
+      // Show payment popup after the last question is answered
+      if (currentQuestionIndex === questions.length - 1) {
+        setShowPaymentPopup(true); // Show the payment popup
+      }
     }
   };
+  
 
   useEffect(() => {
     if (responses.length > 0 && responses.length === questions.length) {
       (async () => {
-        await fetch("/api/save-responses", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(responses),
-        });
-        // router.push("/payment");
+        try {
+          const dataToSend = responses.map((res) => ({
+            Question: res.question,
+            // Convert the answer to a string to prevent time from being interpreted as float
+            Answer: String(res.answer),
+          }));
+  
+          console.log('Sending this data to SheetDB:', dataToSend);
+  
+          const response = await fetch('https://sheetdb.io/api/v1/jnex71dn260ow', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              data: dataToSend,
+            }),
+          });
+  
+          if (response.ok) {
+            console.log('Data saved successfully');
+          } else {
+            const errorData = await response.json();
+            console.error('Error saving data:', errorData);
+          }
+        } catch (error) {
+          console.error('Error during fetch:', error);
+        }
       })();
     } else if (responses.length > 0) {
       setTimeout(() => {
@@ -100,19 +123,19 @@ export default function Chat() {
       }, 800);
     }
   }, [responses, questions.length, router]);
-
+  
+  
   useEffect(() => {
-    // Scroll to the end of the messages with a slight delay
     const scrollTimeout = setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({
         behavior: "smooth",
         block: "nearest",
       });
-    }, 100); // Delay to ensure DOM updates
-
-    // Cleanup the timeout on unmount
+    }, 100);
     return () => clearTimeout(scrollTimeout);
   }, [responses, currentQuestionIndex]);
+
+
 
   return (
     <div className="flex flex-col h-screen overflow-auto  scrollbar-hide">
@@ -299,6 +322,52 @@ export default function Chat() {
           </div>
         </div>
       </div>
+{/* Payment Popup Modal */}
+{showPaymentPopup && (
+  <div
+    className="fixed inset-0 bg-[#3e3e3e] bg-opacity-50 flex justify-center items-center z-50 backdrop-blur-sm"
+  >
+    <div className="bg-white shadow-lg p-6 rounded-[20px] text-center relative w-11/12 max-w-xs md:max-w-md lg:max-w-lg">
+      {/* Close button (X) */}
+      <button
+        className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 focus:outline-none"
+        onClick={() => setShowPaymentPopup(false)}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      {/* Checkmark Icon using Image from public/tick.png */}
+      <div className="flex justify-center mb-4">
+        <Image
+          src="/tick.png"
+          alt="Checkmark"
+          width={60}
+          height={60}
+          className="h-10 w-10 md:h-12 md:w-12" // Smaller size on mobile, larger on medium screens and up
+        />
+      </div>
+
+      <h2 className="text-2xl font-bold mb-2">Awesome!</h2>
+      <p className="text-gray-500 mb-4">You&apos;re ready to proceed with the payment.</p>
+      
+      <div className="mt-4">
+        <a
+          href="upi://pay?pa=suhas.ghosal2002@okaxis&pn=Suhas%20Ghosal&am=200.00&cu=INR&aid=uGICAgIDrp7vSHg"
+          target="_blank"
+          className="bg-[#0071e3] text-white px-4 py-2 rounded-full inline-block hover:bg-[#0071e3]"
+        >
+          Pay via UPI
+        </a>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+
 
       {/* Input Box */}
       <div className="fixed bottom-0 left-0 w-full bg-white px-4 py-4">
