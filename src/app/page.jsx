@@ -42,16 +42,15 @@ export default function Chat() {
 
   const router = useRouter();
   const questions = [
-    "Hello from faceless, what's your name?",
+    "Hello from faceless, how's it going today?",
     "What's your email? We'll send the meeting link here.",
     "What's your preferred date for the meeting? eg. 19th Oct",
     "Mention the time in AM/PM. Available between 11am to 2am.",
-    "That's all we need to know. We'll send you the payment link now, then verify the transaction and rest assured, will reach you regarding the details via email. If you feel you've made a mistake, kindly refresh the page. type anything to continue.",
-    
-    
+    "That's all we need to know. We'll send you the payment link now, then verify the transaction and rest assured, will reach you regarding the details via email. If you feel you've made a mistake, kindly refresh the page. Type anything to continue.",
   ];
-  const [showPaymentPopup, setShowPaymentPopup] = useState(false); // State to show/hide payment popup
-
+  const [showProfile, setShowProfile] = useState(true);  // Add this state
+ 
+  const [showPaymentPopup, setShowPaymentPopup] = useState(false);
   const [responses, setResponses] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [input, setInput] = useState("");
@@ -67,7 +66,6 @@ export default function Chat() {
   }, [currentQuestionIndex, initialTimestamp]);
 
   const handleSendMessage = () => {
-    
     if (input.trim()) {
       setResponses([
         ...responses,
@@ -76,55 +74,60 @@ export default function Chat() {
       setInput("");
       setShowNextMessage(false);
   
-      // Show payment popup after the last question is answered
       if (currentQuestionIndex === questions.length - 1) {
-        setShowPaymentPopup(true); // Show the payment popup
+        setShowPaymentPopup(true);
+      }
+  
+      // Hide the profile section after the first message
+      if (currentQuestionIndex === 0) {
+        setShowProfile(false);
       }
     }
   };
   
-
   useEffect(() => {
     if (responses.length > 0 && responses.length === questions.length) {
       (async () => {
         try {
           const dataToSend = responses.map((res) => ({
             Question: res.question,
-            // Convert the answer to a string to prevent time from being interpreted as float
+
             Answer: String(res.answer),
           }));
-  
-          console.log('Sending this data to SheetDB:', dataToSend);
-  
-          const response = await fetch('https://sheetdb.io/api/v1/jnex71dn260ow', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              data: dataToSend,
-            }),
-          });
-  
+
+          console.log("Sending this data to SheetDB:", dataToSend);
+
+          const response = await fetch(
+            "https://sheetdb.io/api/v1/jnex71dn260ow",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                data: dataToSend,
+              }),
+            }
+          );
+
           if (response.ok) {
-            console.log('Data saved successfully');
+            console.log("Data saved successfully");
           } else {
             const errorData = await response.json();
-            console.error('Error saving data:', errorData);
+            console.error("Error saving data:", errorData);
           }
         } catch (error) {
-          console.error('Error during fetch:', error);
+          console.error("Error during fetch:", error);
         }
       })();
     } else if (responses.length > 0) {
       setTimeout(() => {
-        setCurrentQuestionIndex((prevIndex) => prevIndex + 1); // Use functional update
+        setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
         setShowNextMessage(true);
       }, 800);
     }
   }, [responses, questions.length, router]);
-  
-  
+
   useEffect(() => {
     const scrollTimeout = setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({
@@ -134,8 +137,6 @@ export default function Chat() {
     }, 100);
     return () => clearTimeout(scrollTimeout);
   }, [responses, currentQuestionIndex]);
-
-
 
   return (
     <div className="flex flex-col h-screen overflow-auto  scrollbar-hide">
@@ -151,8 +152,8 @@ export default function Chat() {
               src="/dyisland.png"
               className="h-6 w-20 ml-8"
               alt="Dynamic Island"
-              width={80} // Adjust the width as per the actual image size
-              height={24} // Adjust the height as per the actual image size
+              width={80}
+              height={24}
             />
           </div>
 
@@ -210,8 +211,8 @@ export default function Chat() {
             src="/pfp.png"
             className="rounded-full h-10 w-10 mx-3"
             alt="Profile"
-            width={40} // Adjust the width according to the image size (10 x 4 = 40px)
-            height={40} // Adjust the height according to the image size (10 x 4 = 40px)
+            width={40}
+            height={40}
           />
 
           <div className="flex flex-col">
@@ -225,8 +226,8 @@ export default function Chat() {
                 src="/call.png"
                 className="h-6 w-6"
                 alt="Call Icon"
-                width={24} // 6 * 4 = 24px
-                height={24} // 6 * 4 = 24px
+                width={24}
+                height={24}
               />
             </button>
 
@@ -235,63 +236,67 @@ export default function Chat() {
                 src="/vidcall.png"
                 className="h-7 w-7"
                 alt="Video Call Icon"
-                width={28} // 7 * 4 = 28px
-                height={28} // 7 * 4 = 28px
+                width={28}
+                height={28}
               />
             </button>
           </div>
         </div>
 
         {/* Profile bIG */}
-        <div className="flex flex-col justify-end flex-grow overflow-hidden pt-2 pb-20 px-4 scrollbar-hide">
-          <div className="max-w-xs mx-auto bg-#FFFFFF rounded-lg overflow-hidden mt-28">
-            <div className="flex justify-center mt-2">
-              <div className="rounded-full border-4 border-white">
-                <Image
-                  src="/pfp.png"
-                  alt="Profile"
-                  width={80}
-                  height={80}
-                  className="rounded-full"
-                />
-              </div>
-            </div>
-            <div className="text-center mt-1">
-              <h2 className="text-lg font-bold text-gray-800">faceless</h2>
-              <p className="text-gray-600 text-sm">
-                Mental health service · Instagram
-              </p>
-              <div>
-                {isVisible && (
-                  <div id="demlete">
-                    <p className=" text-gray-600 text-sm">
-                      22 followers · 33 posts
-                    </p>
-                    <p className=" text-gray-600 text-sm">
-                      You don&apos;t follow each other on Instagram
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="flex justify-center mt-2">
-              <a href="/about">
-                <button className="bg-[#EFEFEF] text-black px-3 py-1 font-semibold text-sm/[23px] rounded-md hover:bg-[#b8b0b0]">
-                  About us
-                </button>
-              </a>
-            </div>
-          </div>
+        {showProfile && (
+  <div className="flex flex-col justify-end flex-grow overflow-hidden pt-2 pb-20 px-4 scrollbar-hide">
+    <div className="max-w-xs mx-auto bg-#FFFFFF rounded-lg overflow-hidden mt-28">
+      {/* Profile Section */}
+      <div className="flex justify-center mt-2">
+        <div className="rounded-full border-4 border-white">
+          <Image
+            src="/pfp.png"
+            alt="Profile"
+            width={80}
+            height={80}
+            className="rounded-full"
+          />
         </div>
+      </div>
+      <div className="text-center mt-1">
+        <h2 className="text-lg font-bold text-gray-800">faceless</h2>
+        <p className="text-gray-600 text-sm">
+          Mental health service · Instagram
+        </p>
+        <div>
+          {isVisible && (
+            <div id="demlete">
+              <p className="text-gray-600 text-sm">
+                22 followers · 33 posts
+              </p>
+              <p className="text-gray-600 text-sm">
+                You don&apos;t follow each other on Instagram
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="flex justify-center mt-2">
+        <a href="/about">
+          <button className="bg-[#EFEFEF] text-black px-3 py-1 font-semibold text-sm/[23px] rounded-md hover:bg-[#b8b0b0]">
+            About us
+          </button>
+        </a>
+      </div>
+    </div>
+  </div>
+)}
+
         {/* Chat Window */}
         {initialTimestamp && (
-          <div className="flex justify-center items-center text-sm text-gray-400 mb-2">
+          <div className="flex justify-center items-center text-sm text-gray-400 mb-2 mt-36">
             {formatDate(initialTimestamp)}
           </div>
         )}
 
         <div
-          className="flex-grow-0 h-[25vh] h-md:h-[35vh] h-lg:h-[45vh] overflow-y-auto scrollbar-hide"
+          className="flex-grow-0 h-[25vh] h-md:h-[100vh] h-lg:h-[100vh] overflow-y-auto scrollbar-hide"
           // ref={chatContainerRef}
         >
           <div className="w-full max-w-sm mx-auto text-black rounded-lg text-[14px] px-3">
@@ -322,52 +327,59 @@ export default function Chat() {
           </div>
         </div>
       </div>
-{/* Payment Popup Modal */}
-{showPaymentPopup && (
-  <div
-    className="fixed inset-0 bg-[#3e3e3e] bg-opacity-50 flex justify-center items-center z-50 backdrop-blur-sm"
-  >
-    <div className="bg-white shadow-lg p-6 rounded-[20px] text-center relative w-11/12 max-w-xs md:max-w-md lg:max-w-lg">
-      {/* Close button (X) */}
-      <button
-        className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 focus:outline-none"
-        onClick={() => setShowPaymentPopup(false)}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+      {/* Payment Popup Modal */}
+      {showPaymentPopup && (
+        <div className="fixed inset-0 bg-[#3e3e3e] bg-opacity-50 flex justify-center items-center z-50 backdrop-blur-sm">
+          <div className="bg-white shadow-lg p-6 rounded-[20px] text-center relative w-11/12 max-w-xs md:max-w-md lg:max-w-lg">
+            {/* Close button (X) */}
+            <button
+              className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 focus:outline-none"
+              onClick={() => setShowPaymentPopup(false)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
 
-      {/* Checkmark Icon using Image from public/tick.png */}
-      <div className="flex justify-center mb-4">
-        <Image
-          src="/tick.png"
-          alt="Checkmark"
-          width={60}
-          height={60}
-          className="h-10 w-10 md:h-12 md:w-12" // Smaller size on mobile, larger on medium screens and up
-        />
-      </div>
+            {/* Checkmark Icon using Image from public/tick.png */}
+            <div className="flex justify-center mb-4">
+              <Image
+                src="/tick.png"
+                alt="Checkmark"
+                width={60}
+                height={60}
+                className="h-10 w-10 md:h-12 md:w-12"
+              />
+            </div>
 
-      <h2 className="text-2xl font-bold mb-2">Awesome!</h2>
-      <p className="text-gray-500 mb-4">You&apos;re ready to proceed with the payment.</p>
-      
-      <div className="mt-4">
-        <a
-          href="upi://pay?pa=suhas.ghosal2002@okaxis&pn=Suhas%20Ghosal&am=200.00&cu=INR&aid=uGICAgIDrp7vSHg"
-          target="_blank"
-          className="bg-[#0071e3] text-white px-4 py-2 rounded-full inline-block hover:bg-[#0071e3]"
-        >
-          Pay via UPI
-        </a>
-      </div>
-    </div>
-  </div>
-)}
+            <h2 className="text-2xl font-bold mb-2">Awesome!</h2>
+            <p className="text-gray-500 mb-4">
+              You&apos;re ready to proceed with the payment.
+            </p>
 
-
-
-
+            <div className="mt-4">
+              <a
+                href="upi://pay?pa=suhas.ghosal2002@okaxis&pn=Suhas%20Ghosal&am=129.00&cu=INR&aid=uGICAgIDrp7vSHg"
+                target="_blank"
+                className="bg-[#0071e3] text-white px-4 py-2 rounded-full inline-block hover:bg-[#0071e3]"
+              >
+                Pay via UPI
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Input Box */}
       <div className="fixed bottom-0 left-0 w-full bg-white px-4 py-4">
